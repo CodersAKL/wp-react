@@ -1,8 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Link from 'next/link';
-import Router from 'next/router';
-import Config from '../config';
 
 const linkStyle = {
   marginRight: 15,
@@ -13,21 +11,9 @@ const getSlug = url => {
   return parts.length > 2 ? parts[parts.length - 2] : '';
 };
 
-class Menu extends Component {
-  state = {
-    token: null,
-    username: null,
-  };
-
-  componentDidMount() {
-    const token = localStorage.getItem(Config.AUTH_TOKEN);
-    const username = localStorage.getItem(Config.USERNAME);
-    this.setState({ token, username });
-  }
-
+class Menu extends PureComponent<{ menu: any }> {
   render() {
     const { menu } = this.props;
-    const { token, username } = this.state;
     const menuItems = menu.items.map(item => {
       if (item.object === 'custom') {
         return (
@@ -55,23 +41,6 @@ class Menu extends Component {
           <a style={linkStyle}>Home</a>
         </Link>
         {menuItems}
-
-        {token ? (
-          <button
-            type="button"
-            className="pointer black"
-            onClick={() => {
-              localStorage.removeItem(Config.AUTH_TOKEN);
-              Router.push('/login');
-            }}
-          >
-            Logout {username}
-          </button>
-        ) : (
-          <Link href="/login">
-            <a style={linkStyle}>Login</a>
-          </Link>
-        )}
       </div>
     );
   }

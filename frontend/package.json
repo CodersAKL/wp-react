@@ -13,7 +13,7 @@
   "dependencies": {
     "express": "^4.16.4",
     "isomorphic-unfetch": "^3.0.0",
-    "next": "7.0.2",
+    "next": "^9.0.2",
     "react": "^16.7.0",
     "wpapi": "^1.2.1",
     "autoprefixer": "9.4.7",
@@ -22,22 +22,25 @@
     "axios": "^0.18.0"
   },
   "devDependencies": {
-    "eslint": "^5.13.0",
+    "@types/node": "^12.6.8",
+    "@types/react": "^16.8.23",
     "babel-eslint": "^10.0.1",
+    "babel-plugin-module-resolver": "^3.1.3",
+    "babel-plugin-wrap-in-js": "^1.1.0",
+    "eslint": "^5.13.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^4.0.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
-    "babel-plugin-module-resolver": "^3.1.3",
-    "babel-plugin-wrap-in-js": "^1.1.0",
     "node-sass": "^4.12.0",
     "normalize.css": "^8.0.1",
     "postcss-loader": "^3.0.0",
     "raw-loader": "^1.0.0",
     "react-dom": "^16.7.0",
     "sass-loader": "^7.1.0",
+    "typescript": "^3.5.3",
     "webpack": "^4.29.0"
   }
 }

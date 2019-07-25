@@ -2,16 +2,19 @@ version: '3'
 
 services:
     db-headless:
+        build:
+            context: ./
+            dockerfile: DockerfileDB
         container_name: db-headless
         environment:
-            - MYSQL_ROOT_PASSWORD: root123
+            - MYSQL_ROOT_PASSWORD=root123
             - MYSQL_DATABASE=${WORDPRESS_DB_NAME}
             - MYSQL_PASSWORD=${WORDPRESS_DB_PASSWORD}
             - MYSQL_USER=${WORDPRESS_DB_USER}
-        image: mariadb
+        # image: mariadb
         user: 1000:1000
         volumes:
-            - ./docker/db_data:/var/lib/mysql
+            - $PWD/docker/db_data:/var/lib/mysql
         ports:
             - '3307:3306'
     wp-headless:
@@ -29,7 +32,7 @@ services:
             - ./docker/install_wordpress.sh:/usr/local/bin/install_wordpress
             - ./docker/plugins:/var/www/plugins
     frontend:
-        command: bash -c 'yarn && yarn start'
+        command: bash -c 'npm i && npm start'
         container_name: frontend
         expose:
             - '3000'

@@ -14,4 +14,5 @@
  */
 function get_frontend_origin() {
 	return 'http://localhost:3000';
+	// return get_home_url();
 }

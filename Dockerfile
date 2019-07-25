@@ -25,7 +25,8 @@ RUN chown www-data:www-data /var/www/html
 
 # phpunit, phpcs, wpcs
 USER www-data
-RUN composer global require hirak/prestissimo && composer global require \
+RUN composer global require hirak/prestissimo
+RUN composer global require \
 	phpunit/phpunit \
 	dealerdirect/phpcodesniffer-composer-installer \
 	phpcompatibility/phpcompatibility-wp \

@@ -9,26 +9,12 @@ import Config from '../config';
 
 const wp = new WPAPI({ endpoint: Config.apiUrl });
 
-const headerImageStyle = {
-  marginTop: 50,
-  marginBottom: 50,
-};
-
-const tokenExpired = () => {
-  if (process.browser) {
-    localStorage.removeItem(Config.AUTH_TOKEN);
-  }
-  wp.setHeaders('Authorization', '');
-  Router.push('/login');
-};
-
-class Index extends Component {
+class Index extends Component<{ posts: any, pages: any, headerMenu: any, page: any }> {
   state = {
     id: '',
   };
 
   static async getInitialProps() {
-    try {
       const [page, posts, pages] = await Promise.all([
         wp
           .pages()
@@ -42,36 +28,12 @@ class Index extends Component {
       ]);
 
       return { page, posts, pages };
-    } catch (err) {
-      if (err.data && err.data.status === 403) {
-        tokenExpired();
-      }
     }
 
-    return null;
-  }
-
-  componentDidMount() {
-    const token = localStorage.getItem(Config.AUTH_TOKEN);
-    if (token) {
-      wp.setHeaders('Authorization', `Bearer ${token}`);
-      wp.users()
-        .me()
-        .then(data => {
-          const { id } = data;
-          this.setState({ id });
-        })
-        .catch(err => {
-          if (err.data.status === 403) {
-            tokenExpired();
-          }
-        });
-    }
-  }
 
   render() {
-    const { id } = this.state;
     const { posts, pages, headerMenu, page } = this.props;
+    console.log(page);
     const fposts = posts.map(post => {
       return (
         <ul key={post.slug}>
@@ -94,7 +56,7 @@ class Index extends Component {
               as={`/page/${ipage.slug}`}
               href={`/post?slug=${ipage.slug}&apiRoute=page`}
             >
-              <a>{ipage.title.rendered}</a>
+              <a href="/">{ipage.title.rendered}</a>
             </Link>
           </li>
         </ul>
@@ -104,39 +66,20 @@ class Index extends Component {
       <Layout>
         <Menu menu={headerMenu} />
         Logo
-        <h1>{page.title.rendered}</h1>
-        <div
+        {/* <h1>{page.title.rendered}</h1> */}
+        {/* <div
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html: page.content.rendered,
           }}
-        />
+        /> */}
         <h2>Posts</h2>
         {fposts}
         <h2>Pages</h2>
         {fpages}
-        {id ? (
-          <div>
-            <h2>You Are Logged In</h2>
-            <p>
-              Your user ID is <span>{id}</span>, retrieved via an authenticated
-              API query.
-            </p>
-          </div>
-        ) : (
-          <div>
-            <h2>You Are Not Logged In</h2>
-            <p>
-              The frontend is not making authenticated API requests.{' '}
-              <a href="/login">Log in.</a>
-            </p>
-          </div>
-        )}
         <h2>Where You're At</h2>
         <p>
-          You are looking at the REST API-powered React frontend. Be sure to
-          also check out the{' '}
-          <a href="http://localhost:3001/">GraphQL-powered frontend</a>.
+          You are looking at the REST API-powered React frontend.
         </p>
       </Layout>
     );
