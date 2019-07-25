@@ -6,7 +6,7 @@ RUN mv "$PHP_INI_DIR"/php.ini-development "$PHP_INI_DIR"/php.ini
 
 # install_wordpress.sh & misc. dependencies
 RUN apt-get update; \
-	apt-get install -yq mysql-client netcat sudo less git unzip
+	apt-get install -yq mariadb-client netcat sudo less git unzip
 
 # wp-cli
 RUN curl -sL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o wp; \
@@ -21,13 +21,17 @@ RUN curl -sL https://raw.githubusercontent.com/composer/getcomposer.org/master/w
 	mkdir /var/www/.composer; \
 	chown www-data:www-data /var/www/.composer
 
+RUN chown www-data:www-data /var/www/html
+
 # phpunit, phpcs, wpcs
-RUN sudo -u www-data composer global require \
+USER www-data
+RUN composer global require hirak/prestissimo && composer global require \
 	phpunit/phpunit \
 	dealerdirect/phpcodesniffer-composer-installer \
 	phpcompatibility/phpcompatibility-wp \
 	automattic/vipwpcs
 
+USER root
 # include composer-installed executables in $PATH
 ENV PATH="/var/www/.composer/vendor/bin:${PATH}"
 
