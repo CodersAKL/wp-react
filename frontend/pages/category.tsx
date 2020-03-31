@@ -3,27 +3,34 @@ import React, { Component } from 'react';
 import Link from 'next/link';
 import Error from 'next/error';
 import WPAPI from 'wpapi';
+import { NextPageContext } from 'next';
+
 import Layout from '../components/Layout';
 import PageWrapper from '../components/PageWrapper';
-import Menu from '../components/Menu';
+import Menu, { MenuItems } from '../components/Menu';
 import Config from '../config';
+import { PostItem } from './post';
 
 const wp = new WPAPI({ endpoint: Config.apiUrl });
 
-class Category extends Component {
-  static async getInitialProps(context) {
-    const { slug } = context.query;
+export interface CategoryItem {
+  id: string;
+  name: string;
+}
+interface ComponentProps {
+  categories: CategoryItem[];
+  posts: PostItem[];
+  headerMenu: MenuItems;
+}
 
-    const categories = await wp
-      .categories()
-      .slug(slug)
-      .embed();
+class Category extends Component<ComponentProps> {
+  static async getInitialProps(context: NextPageContext) {
+    const { slug } = context.query;
+    const categories = await wp.categories().slug(slug.toString()).embed();
 
     if (categories.length > 0) {
-      const posts = await wp
-        .posts()
-        .category(categories[0].id)
-        .embed();
+      const posts = await wp.posts().category(categories[0].id).embed();
+
       return { categories, posts };
     }
 
@@ -32,9 +39,9 @@ class Category extends Component {
 
   render() {
     const { categories, posts, headerMenu } = this.props;
-    if (categories.length === 0) return <Error statusCode={404} />;
 
-    const fposts = posts.map(post => {
+    if (categories.length === 0) return <Error statusCode={404} />;
+    const fPosts = posts.map((post) => {
       return (
         <ul key={post.slug}>
           <li>
@@ -48,11 +55,12 @@ class Category extends Component {
         </ul>
       );
     });
+
     return (
       <Layout>
         <Menu menu={headerMenu} />
         <h1>{categories[0].name} Posts</h1>
-        {fposts}
+        {fPosts}
       </Layout>
     );
   }

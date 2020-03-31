@@ -1,40 +1,45 @@
 import React, { Component } from 'react';
 import Link from 'next/link';
-import Router from 'next/router';
 import WPAPI from 'wpapi';
+
 import Layout from '../components/Layout';
 import PageWrapper from '../components/PageWrapper';
-import Menu from '../components/Menu';
+import Menu, { MenuItems } from '../components/Menu';
 import Config from '../config';
+import { PostItem } from './post';
 
 const wp = new WPAPI({ endpoint: Config.apiUrl });
 
-class Index extends Component<{ posts: any, pages: any, headerMenu: any, page: any }> {
-  state = {
-    id: '',
-  };
+interface ComponentProps {
+  posts: PostItem[];
+  pages: PostItem[];
+  headerMenu: MenuItems;
+}
+interface ComponentState {
+  id: string;
+}
 
+class Index extends Component<ComponentProps, ComponentState> {
   static async getInitialProps() {
-      const [page, posts, pages] = await Promise.all([
-        wp
-          .pages()
-          .slug('welcome')
-          .embed()
-          .then(data => {
-            return data[0];
-          }),
-        wp.posts().embed(),
-        wp.pages().embed(),
-      ]);
+    const [page, posts, pages] = await Promise.all([
+      wp
+        .pages()
+        .slug('welcome')
+        .embed()
+        .then((data) => {
+          return data[0];
+        }),
+      wp.posts().embed(),
+      wp.pages().embed(),
+    ]);
 
-      return { page, posts, pages };
-    }
-
+    return { page, posts, pages };
+  }
 
   render() {
-    const { posts, pages, headerMenu, page } = this.props;
-    console.log(page);
-    const fposts = posts.map(post => {
+    const { posts, pages, headerMenu } = this.props;
+
+    const fPosts = posts.map((post) => {
       return (
         <ul key={post.slug}>
           <li>
@@ -48,20 +53,21 @@ class Index extends Component<{ posts: any, pages: any, headerMenu: any, page: a
         </ul>
       );
     });
-    const fpages = pages.map(ipage => {
+    const fPages = pages.map((pageItem) => {
       return (
-        <ul key={ipage.slug}>
+        <ul key={pageItem.slug}>
           <li>
             <Link
-              as={`/page/${ipage.slug}`}
-              href={`/post?slug=${ipage.slug}&apiRoute=page`}
+              as={`/page/${pageItem.slug}`}
+              href={`/post?slug=${pageItem.slug}&apiRoute=page`}
             >
-              <a href="/">{ipage.title.rendered}</a>
+              <a href="/">{pageItem.title.rendered}</a>
             </Link>
           </li>
         </ul>
       );
     });
+
     return (
       <Layout>
         <Menu menu={headerMenu} />
@@ -74,13 +80,11 @@ class Index extends Component<{ posts: any, pages: any, headerMenu: any, page: a
           }}
         /> */}
         <h2>Posts</h2>
-        {fposts}
+        {fPosts}
         <h2>Pages</h2>
-        {fpages}
-        <h2>Where You're At</h2>
-        <p>
-          You are looking at the REST API-powered React frontend.
-        </p>
+        {fPages}
+        <h2>Where We are?</h2>
+        <p>You are looking at the REST API-powered React frontend.</p>
       </Layout>
     );
   }

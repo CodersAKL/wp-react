@@ -1,17 +1,29 @@
 import React, { Component } from 'react';
 import Error from 'next/error';
 import WPAPI from 'wpapi';
+import { NextPageContext } from 'next';
+
 import Layout from '../components/Layout';
 import PageWrapper from '../components/PageWrapper';
-import Menu from '../components/Menu';
+import Menu, { MenuItems } from '../components/Menu';
 import Config from '../config';
 
 const wp = new WPAPI({ endpoint: Config.apiUrl });
 
-class Post extends Component {
-  static async getInitialProps(context) {
-    const { slug, apiRoute } = context.query;
+export interface PostItem {
+  title: { rendered: string };
+  content: { rendered: string };
+  slug: string;
+  code: string;
+}
+interface ComponentProps {
+  post: PostItem;
+  headerMenu: MenuItems;
+}
 
+class Post extends Component<ComponentProps, {}> {
+  static async getInitialProps(context: NextPageContext) {
+    const { slug, apiRoute } = context.query;
     let apiMethod = wp.posts();
 
     switch (apiRoute) {
@@ -24,11 +36,10 @@ class Post extends Component {
       default:
         break;
     }
-
     const post = await apiMethod
-      .slug(slug)
+      .slug(slug.toString())
       .embed()
-      .then(data => {
+      .then((data) => {
         return data[0];
       });
 
@@ -37,6 +48,7 @@ class Post extends Component {
 
   render() {
     const { post, headerMenu } = this.props;
+
     if (!post.title) return <Error statusCode={404} />;
 
     return (

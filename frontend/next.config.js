@@ -1,5 +1,5 @@
-const path = require('path');
-const glob = require('glob');
+/* eslint-disable import/no-extraneous-dependencies */
+const sass = require('sass');
 
 module.exports = {
   webpack: config => {
@@ -24,10 +24,7 @@ module.exports = {
           {
             loader: 'sass-loader',
             options: {
-              includePaths: ['styles', 'node_modules']
-                .map(d => path.join(__dirname, d))
-                .map(g => glob.sync(g))
-                .reduce((a, c) => a.concat(c), []),
+              implementation: sass,
             },
           },
         ],

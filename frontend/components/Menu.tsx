@@ -2,19 +2,33 @@
 import React, { PureComponent } from 'react';
 import Link from 'next/link';
 
+export interface MenuItem {
+  object: string;
+  url: string;
+  ID: string;
+  title: string;
+}
+
+export interface MenuItems {
+  items: MenuItem[];
+}
+interface ComponentProps {
+  menu: MenuItems;
+}
 const linkStyle = {
   marginRight: 15,
 };
 
-const getSlug = url => {
+const getSlug = (url: string) => {
   const parts = url.split('/');
+
   return parts.length > 2 ? parts[parts.length - 2] : '';
 };
 
-class Menu extends PureComponent<{ menu: any }> {
+class Menu extends PureComponent<ComponentProps> {
   render() {
     const { menu } = this.props;
-    const menuItems = menu.items.map(item => {
+    const menuItems = menu.items.map((item) => {
       if (item.object === 'custom') {
         return (
           <Link href={item.url} key={item.ID}>
@@ -24,6 +38,7 @@ class Menu extends PureComponent<{ menu: any }> {
       }
       const slug = getSlug(item.url);
       const actualPage = item.object === 'category' ? 'category' : 'post';
+
       return (
         <Link
           as={`/${item.object}/${slug}`}
@@ -45,4 +60,5 @@ class Menu extends PureComponent<{ menu: any }> {
     );
   }
 }
+
 export default Menu;
